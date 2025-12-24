@@ -20,6 +20,23 @@ export const server = new McpServer({
   version: "1.0.0",
 });
 
+// Wrap server.tool to add explicit request logging
+const originalTool = server.tool.bind(server);
+(server as any).tool = (name: string, description: string, schema: any, handler: any) => {
+  return originalTool(name, description, schema, async (args: any, extra: any) => {
+    logger.log(`MCP Tool Request: ${name} with args: ${JSON.stringify(args)}`);
+    try {
+      const result = await handler(args, extra);
+      logger.log(`MCP Tool Response: ${name} success`);
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`MCP Tool Response: ${name} failed: ${errorMessage}`);
+      throw error;
+    }
+  });
+};
+
 export let serverConnected = false;
 export let obsConnected = false;
 let reconnectInterval: NodeJS.Timeout | null = null;
@@ -30,9 +47,9 @@ const CONNECTION_CHECK_INTERVAL = 1000; // 1 second (reduced from 5)
 const MAX_BACKOFF_INTERVAL = 30000; // Max 30 seconds between attempts
 
 const logger = {
-  log: (message: string) => console.error(message),
-  error: (message: string) => console.error(message),
-  debug: (message: string) => console.error(message),
+  log: (message: string) => console.error(`[${new Date().toISOString()}] LOG: ${message}`),
+  error: (message: string) => console.error(`[${new Date().toISOString()}] ERROR: ${message}`),
+  debug: (message: string) => console.error(`[${new Date().toISOString()}] DEBUG: ${message}`),
 };
 
 // Function to attempt OBS connection
@@ -137,6 +154,12 @@ export async function startServer() {
     if (transportType === "sse") {
       const app = express();
       app.use(cors());
+
+      // HTTP Request logging
+      app.use((req, res, next) => {
+        logger.log(`HTTP ${req.method} ${req.path} from ${req.ip}`);
+        next();
+      });
 
       // Bearer Token Authentication
       app.use((req, res, next) => {
