@@ -1,0 +1,10 @@
+id: sprint-4-b3d9e2
+title: "Update Cloud Build to use Artifact Registry"
+goal: "Migrate container publishing from GCR to Artifact Registry (us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp)"
+owner: "Junie"
+createdAt: "2024-12-24T11:53:00Z"
+status: "planning"
+links:
+  branch: "feature/sprint-4-b3d9e2-update-artifact-registry"
+notes: |
+  The user requested to change the image destination to us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp.
