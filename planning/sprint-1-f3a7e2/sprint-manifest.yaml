@@ -1,0 +1,10 @@
+id: sprint-1-f3a7e2
+title: "Remote Access & Containerization"
+goal: "Analyze codebase and create Technical Architecture for remote access, containerization, and Cloud Run deployment."
+owner: "Junie"
+createdAt: "2024-12-24T11:23:00Z"
+status: "planning"
+links:
+  branch: "feature/sprint-1-f3a7e2-remote-access-containerization"
+notes: |
+  First sprint focused on architecture and planning for remote OBS control.

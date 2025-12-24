@@ -1,0 +1,17 @@
+tasks:
+  - id: 1
+    title: "Codebase Analysis"
+    description: "Deep dive into current transport and OBS client implementation."
+    status: "done"
+  - id: 2
+    title: "Draft Technical Architecture"
+    description: "Write the architecture doc covering SSE, Docker, and Cloud Run."
+    status: "in-progress"
+  - id: 3
+    title: "Create validate_deliverable.sh"
+    description: "Script to verify sprint artifacts."
+    status: "todo"
+  - id: 4
+    title: "Final Review and PR"
+    description: "Internal review and creation of Pull Request."
+    status: "todo"
