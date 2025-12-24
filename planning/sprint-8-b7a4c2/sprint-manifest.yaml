@@ -1,0 +1,10 @@
+id: sprint-8-b7a4c2
+title: "Support VPC Connector in Deployment"
+goal: "Enable passing a VPC connector name during deployment and configure Cloud Run accordingly."
+owner: "Junie"
+createdAt: "2024-12-24T12:48:00Z"
+status: "planning"
+links:
+  branch: "feature/sprint-8-b7a4c2-vpc-connector"
+notes: |
+  The deployment script needs to handle an optional VPC connector. If provided, it also sets ingress to Internal + Load Balancing and ensures public access.

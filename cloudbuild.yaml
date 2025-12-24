@@ -11,20 +11,21 @@ steps:
 
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
+    entrypoint: 'bash'
     args:
-      - 'run'
-      - 'deploy'
-      - 'obs-mcp'
-      - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA'
-      - '--region'
-      - 'us-central1'
-      - '--platform'
-      - 'managed'
-      - '--allow-unauthenticated'
-      - '--set-env-vars'
-      - 'MCP_TRANSPORT=sse'
+      - '-c'
+      - |
+        VPC_ARGS=""
+        if [ -n "$_VPC_CONNECTOR" ]; then
+          VPC_ARGS="--vpc-connector=$_VPC_CONNECTOR --ingress=internal-and-cloud-load-balancing"
+        fi
+        gcloud run deploy obs-mcp \
+          --image us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA \
+          --region us-central1 \
+          --platform managed \
+          --allow-unauthenticated \
+          --set-env-vars MCP_TRANSPORT=sse \
+          $VPC_ARGS
 
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA'
@@ -32,3 +33,4 @@ images:
 
 substitutions:
   _COMMIT_SHA: 'latest'
+  _VPC_CONNECTOR: ''
