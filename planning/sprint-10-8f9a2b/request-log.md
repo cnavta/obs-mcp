@@ -6,3 +6,9 @@
 - **Shell/Git Commands**:
   - `git checkout -b feature/sprint-10-8f9a2b-self-signed-cert-support`
   - `mkdir -p planning/sprint-10-8f9a2b`
+
+## [2025-12-24T13:25:00Z] - Sprint Completion
+- **Prompt Summary**: User signaled "Sprint complete".
+- **Interpretation**: Finalize sprint artifacts and mark as complete.
+- **Shell/Git Commands**:
+  - `git commit -am "Sprint 10: Complete sprint"`
