@@ -25,7 +25,7 @@ steps:
           --platform managed \
           --allow-unauthenticated \
           --set-env-vars MCP_TRANSPORT=sse \
-          $VPC_ARGS
+          $$VPC_ARGS
 
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA'

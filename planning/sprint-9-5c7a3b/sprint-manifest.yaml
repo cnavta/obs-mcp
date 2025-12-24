@@ -1,0 +1,10 @@
+id: sprint-9-5c7a3b
+title: "Fix Cloud Build Substitution Error"
+goal: "Fix the 'VPC_ARGS is not a valid built-in substitution' error by escaping shell variables in cloudbuild.yaml."
+owner: "Junie"
+createdAt: "2025-12-24T12:53:00Z"
+status: "planning"
+links:
+  branch: "feature/sprint-9-5c7a3b-fix-cloudbuild-args"
+notes: |
+  Cloud Build attempts to resolve $VPC_ARGS as a substitution. We need to use $$VPC_ARGS to escape it.
