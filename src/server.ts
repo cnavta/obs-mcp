@@ -10,7 +10,8 @@ import * as tools from "./tools/index.js";
 // Create the OBS WebSocket client
 const obsClient = new OBSWebSocketClient(
   process.env.OBS_WEBSOCKET_URL || "ws://localhost:4455",
-  process.env.OBS_WEBSOCKET_PASSWORD || null
+  process.env.OBS_WEBSOCKET_PASSWORD || null,
+  { selfSigned: process.env.OBS_WEBSOCKET_SELF_SIGNED === "true" }
 );
 
 // Create the MCP server

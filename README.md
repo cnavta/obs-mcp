@@ -85,6 +85,7 @@ The server provides tools organized by category:
 
 - `OBS_WEBSOCKET_URL`: WebSocket URL (default: `ws://localhost:4455`)
 - `OBS_WEBSOCKET_PASSWORD`: Password for authenticating with OBS WebSocket (if required)
+- `OBS_WEBSOCKET_SELF_SIGNED`: Set to `true` to allow self-signed certificates (useful for remote access via tunnels)
 - `MCP_TRANSPORT`: Choice of transport, either `stdio` (default) or `sse`
 - `MCP_AUTH_TOKEN`: Bearer token for securing SSE endpoints
 - `PORT`: Port for SSE server (default: `8080`)

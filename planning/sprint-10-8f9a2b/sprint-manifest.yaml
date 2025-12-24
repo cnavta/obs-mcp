@@ -1,0 +1,10 @@
+id: sprint-10-8f9a2b
+title: "Self-Signed Certificate Support for WebSocket"
+goal: "Update the WebSocket implementation to accept self-signed certificates if an environment variable is set."
+owner: "Junie"
+createdAt: "2025-12-24T13:15:00Z"
+status: "planning"
+links:
+  branch: "feature/sprint-10-8f9a2b-self-signed-cert-support"
+notes: |
+  This will involve modifying the OBSWebSocketClient to pass the rejectUnauthorized option to the ws library.
