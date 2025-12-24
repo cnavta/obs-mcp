@@ -97,7 +97,7 @@ items:
   - id: IMP-006
     title: "Unit and Integration Testing"
     priority: P1
-    status: in_progress
+    status: done
     effort: M
     owner: agent
     deps: [IMP-003]
@@ -110,11 +110,13 @@ items:
     log:
       - at: 2024-12-24T12:05:00Z
         note: "Starting test implementation."
+      - at: 2024-12-24T12:10:00Z
+        note: "Created src/server.test.ts and verified tests pass."
 
   - id: IMP-007
     title: "Documentation Update"
     priority: P2
-    status: todo
+    status: done
     effort: S
     owner: agent
     deps: [IMP-005]
@@ -122,4 +124,6 @@ items:
     acceptance:
       - "README contains instructions for SSE and Docker setup"
     updated_at: 2025-12-24
-    log: []
+    log:
+      - at: 2024-12-24T12:15:00Z
+        note: "Updated README.md with Remote Access and Docker sections."
