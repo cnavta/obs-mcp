@@ -7,10 +7,12 @@ items:
   - id: DEP-001
     title: "Add deploy script to package.json"
     priority: P0
-    status: todo
+    status: done
     effort: S
     owner: agent
     acceptance:
       - "package.json has deploy script"
     updated_at: "2024-12-24"
-    log: []
+    log:
+      - at: "2024-12-24T12:04:00Z"
+        note: "Added deploy script to package.json and verified."
