@@ -1,0 +1,10 @@
+id: sprint-5-c6d8e0
+title: "Add Deploy Script to package.json"
+goal: "Add a script to package.json that builds, tests, and deploys the app using Google ADC."
+owner: "Junie"
+createdAt: "2025-12-24T17:01:56Z"
+status: "planning"
+links:
+  branch: "feature/sprint-5-c6d8e0-deploy-script"
+notes: |
+  The script will chain local build and test before submitting to Cloud Build.
