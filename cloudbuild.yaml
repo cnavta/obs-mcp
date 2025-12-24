@@ -1,11 +1,11 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$COMMIT_SHA', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:latest', '.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:latest', '.']
 
   # Push the container images to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$COMMIT_SHA']
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:latest']
 
@@ -17,7 +17,7 @@ steps:
       - 'deploy'
       - 'obs-mcp'
       - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$COMMIT_SHA'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA'
       - '--region'
       - 'us-central1'
       - '--platform'
@@ -27,5 +27,8 @@ steps:
       - 'MCP_TRANSPORT=sse'
 
 images:
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:$_COMMIT_SHA'
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp/obs-mcp:latest'
+
+substitutions:
+  _COMMIT_SHA: 'latest'

@@ -1,0 +1,4 @@
+pr_url: null
+branch: feature/sprint-6-f9e4a2-fix-deploy-project
+status: failed
+error: "403 Forbidden: Permission to cnavta/obs-mcp.git denied to castiron-cnavta."
