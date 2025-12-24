@@ -1,0 +1,4 @@
+branch: feature/sprint-10-8f9a2b-self-signed-cert-support
+status: failed
+error: "git push origin failed with 403 Forbidden: Permission to cnavta/obs-mcp.git denied to castiron-cnavta."
+notes: "All changes are committed locally to the branch. PR creation was not possible due to repository permissions."
