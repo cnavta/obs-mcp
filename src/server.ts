@@ -1,5 +1,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
 import { OBSWebSocketClient } from "./client.js";
 import * as tools from "./tools/index.js";
 
@@ -127,10 +131,57 @@ export async function startServer() {
     await tools.initialize(server, obsClient);
     logger.log("Initialized MCP tools");
 
-    // Connect the MCP server to stdio transport
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    logger.log("OBS MCP Server running on stdio");
+    const transportType = process.env.MCP_TRANSPORT || "stdio";
+
+    if (transportType === "sse") {
+      const app = express();
+      app.use(cors());
+
+      // Bearer Token Authentication
+      app.use((req, res, next) => {
+        const authToken = process.env.MCP_AUTH_TOKEN;
+        if (authToken) {
+          const authHeader = req.headers.authorization;
+          if (!authHeader || authHeader !== `Bearer ${authToken}`) {
+            logger.error(`Unauthorized access attempt from ${req.ip}`);
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+          }
+        }
+        next();
+      });
+
+      let transport: SSEServerTransport | null = null;
+
+      app.get("/sse", async (req, res) => {
+        logger.log("New SSE connection");
+        transport = new SSEServerTransport("/messages", res);
+        await server.connect(transport);
+
+        res.on('close', () => {
+          logger.log("SSE connection closed");
+          transport = null;
+        });
+      });
+
+      app.post("/messages", async (req, res) => {
+        if (transport) {
+          await transport.handlePostMessage(req, res);
+        } else {
+          res.status(400).send("No active SSE connection");
+        }
+      });
+
+      const port = process.env.PORT || 8080;
+      app.listen(port, () => {
+        logger.log(`OBS MCP Server running on SSE at http://localhost:${port}`);
+      });
+    } else {
+      // Connect the MCP server to stdio transport
+      const transport = new StdioServerTransport();
+      await server.connect(transport);
+      logger.log("OBS MCP Server running on stdio");
+    }
 
     serverConnected = true;
 

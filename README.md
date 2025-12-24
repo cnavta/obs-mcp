@@ -83,8 +83,57 @@ The server provides tools organized by category:
 
 ## Environment Variables
 
-- `OBS_WEBSOCKET_URL`: WebSocket URL (default: ws://localhost:4455)
+- `OBS_WEBSOCKET_URL`: WebSocket URL (default: `ws://localhost:4455`)
 - `OBS_WEBSOCKET_PASSWORD`: Password for authenticating with OBS WebSocket (if required)
+- `MCP_TRANSPORT`: Choice of transport, either `stdio` (default) or `sse`
+- `MCP_AUTH_TOKEN`: Bearer token for securing SSE endpoints
+- `PORT`: Port for SSE server (default: `8080`)
+
+## Remote Access (SSE)
+
+The server can be run in SSE (Server-Sent Events) mode for remote access, which is required for deployment on platforms like Cloud Run.
+
+### Running with SSE
+
+```bash
+export MCP_TRANSPORT=sse
+export MCP_AUTH_TOKEN=your-secret-token
+export PORT=8080
+npm run start
+```
+
+The server will expose:
+- `GET /sse`: SSE connection endpoint.
+- `POST /messages`: Message handling endpoint.
+
+Clients must provide the `Authorization: Bearer <your-secret-token>` header if `MCP_AUTH_TOKEN` is set.
+
+## Docker Setup
+
+### Using Docker Compose
+
+The easiest way to run the server in a container is using Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+By default, this will use `MCP_TRANSPORT=sse` and attempt to connect to OBS on your host machine.
+
+### Manual Docker Build
+
+```bash
+docker build -t obs-mcp .
+docker run -e MCP_TRANSPORT=sse -p 8080:8080 obs-mcp
+```
+
+## Cloud Deployment
+
+A `cloudbuild.yaml` is provided for automated deployment to Google Cloud Run.
+
+```bash
+gcloud builds submit --config cloudbuild.yaml .
+```
 
 ## Requirements
 
