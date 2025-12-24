@@ -7,7 +7,7 @@
 - [x] `validate_deliverable.sh` script created and executed successfully.
 
 ## Partial
-- None.
+- [ ] Publication to GitHub (failed due to permission issues).
 
 ## Deferred
 - Implementation of the architecture (scheduled for future sprints).

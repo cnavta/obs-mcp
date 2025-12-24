@@ -1,0 +1,4 @@
+branch: feature/sprint-1-f3a7e2-remote-access-containerization
+status: failed
+error: "Permission denied to cnavta/obs-mcp.git. Git push failed with error 403."
+notes: "Unable to push branch or create PR due to authentication/permission issues."

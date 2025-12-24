@@ -7,6 +7,7 @@
 
 ## What didn’t
 - Initial confusion about the exact meaning of "remote access" was resolved by assuming Cloud Run deployment with SSE.
+- Publication failed due to git push permission issues (403 Forbidden).
 
 ## Lessons for future sprints
 - Always check the transport requirements early, as switching from Stdio to SSE has significant impacts on the entry point logic.
