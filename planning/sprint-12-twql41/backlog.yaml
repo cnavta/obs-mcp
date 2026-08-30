@@ -1,0 +1,1780 @@
+# MCP SDK 2.0 Migration - Prioritized Backlog
+# Sprint: sprint-12-twql41
+# Role: Lead Implementor
+# Date: 2026-08-30
+
+metadata:
+  sprint_id: sprint-12-twql41
+  project: obs-mcp
+  migration: "MCP SDK v1.0 → v2.0"
+  total_estimated_hours: 24
+  status: planning
+  created: 2026-08-30
+  owner: Lead Implementor
+
+# Task Status Values:
+# - not_started: Task not yet begun
+# - in_progress: Task currently being worked on
+# - blocked: Task blocked by dependency or issue
+# - completed: Task finished and validated
+# - skipped: Task skipped (with reason)
+
+# Priority Levels:
+# - P0: Critical path, must complete
+# - P1: High priority, should complete
+# - P2: Medium priority, nice to have
+# - P3: Low priority, optional
+
+phases:
+
+  # ============================================================================
+  # PHASE 0: PRE-MIGRATION SETUP (COMPLETED)
+  # ============================================================================
+
+  - phase: 0
+    name: "Pre-Migration Setup"
+    status: completed
+    duration_hours: 4
+    tasks: []  # All completed before backlog creation
+
+  # ============================================================================
+  # PHASE 1: AUTOMATED MIGRATION
+  # ============================================================================
+
+  - phase: 1
+    name: "Automated Migration"
+    status: not_started
+    duration_hours: 2.5
+    tasks:
+
+      - id: P0-001
+        title: "Run codemod transformation"
+        description: |
+          Execute the official MCP codemod to automatically transform v1 code to v2.
+          Command: npx @modelcontextprotocol/codemod@latest v1-to-v2 .
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: []
+        acceptance_criteria:
+          - Codemod executes without fatal errors
+          - Transformation summary displayed
+          - Files modified (imports, handler signatures, etc.)
+          - No package.json corruption
+        commands:
+          - "npx @modelcontextprotocol/codemod@latest v1-to-v2 ."
+        validation:
+          - "Check codemod output for success message"
+          - "Verify git diff shows expected changes"
+
+      - id: P0-002
+        title: "Review codemod output and error markers"
+        description: |
+          Search for @mcp-codemod-error markers that indicate manual fixup required.
+          Catalog all markers and understand what needs manual intervention.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-001]
+        acceptance_criteria:
+          - All @mcp-codemod-error markers found and cataloged
+          - Error locations documented
+          - Reason for each error understood
+        commands:
+          - "grep -rn '@mcp-codemod-error' src/"
+        validation:
+          - "Document all error markers in spreadsheet or notes"
+          - "Categorize errors by type"
+
+      - id: P0-003
+        title: "Analyze codemod transformation quality"
+        description: |
+          Review the codemod changes to understand what was transformed.
+          Verify import updates, handler signature changes, schema wrapping.
+        priority: P0
+        status: not_started
+        estimated_hours: 1.0
+        dependencies: [P0-002]
+        acceptance_criteria:
+          - Import transformations reviewed
+          - Handler signature changes reviewed
+          - Schema transformations reviewed
+          - Quality assessment documented
+        validation:
+          - "Review git diff for each modified file"
+          - "Spot-check 3-5 tool files for correct transformation"
+
+      - id: P0-004
+        title: "Document manual fixup requirements"
+        description: |
+          Create a list of manual changes needed beyond codemod automation.
+          Include transport migration, server factory pattern, error handling.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-003]
+        acceptance_criteria:
+          - Manual fixup list created
+          - Each item prioritized
+          - Estimated effort for each item
+          - List shared with team
+        deliverable: "manual-fixup-list.md"
+        validation:
+          - "Compare list against architecture document"
+
+  # ============================================================================
+  # PHASE 2: DEPENDENCY MANAGEMENT
+  # ============================================================================
+
+  - phase: 2
+    name: "Dependency Management"
+    status: not_started
+    duration_hours: 1.5
+    tasks:
+
+      - id: P0-005
+        title: "Update package.json with v2 packages"
+        description: |
+          Add MCP SDK v2 packages while keeping v1 for staged migration.
+          Add: @modelcontextprotocol/server, /node, /express
+          Keep: @modelcontextprotocol/sdk (for now)
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-004]
+        acceptance_criteria:
+          - "@modelcontextprotocol/server": "^2.0.0" added
+          - "@modelcontextprotocol/node": "^2.0.0" added
+          - "@modelcontextprotocol/express": "^2.0.0" added
+          - v1 SDK (@modelcontextprotocol/sdk) still present
+        files_modified:
+          - package.json
+        validation:
+          - "Verify package.json has both v1 and v2 dependencies"
+
+      - id: P0-006
+        title: "Update Zod version to ^4.2.0"
+        description: |
+          Update zod dependency from ^3.22.4 to ^4.2.0 as required by v2 SDK.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-005]
+        acceptance_criteria:
+          - "zod": "^4.2.0" in package.json
+          - No other zod version in dependencies
+        files_modified:
+          - package.json
+        validation:
+          - "Check package.json for correct zod version"
+
+      - id: P0-007
+        title: "Run npm install and verify resolution"
+        description: |
+          Install all dependencies and verify no conflicts.
+          Check for peer dependency warnings.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-006]
+        acceptance_criteria:
+          - npm install completes successfully
+          - No dependency resolution errors
+          - node_modules populated correctly
+        commands:
+          - "npm install"
+        validation:
+          - "Check for error messages in install output"
+          - "Verify no peer dependency errors"
+
+      - id: P0-008
+        title: "Verify no peer dependency conflicts"
+        description: |
+          Review npm output for peer dependency warnings.
+          Resolve any conflicts between v1 and v2 packages.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-007]
+        acceptance_criteria:
+          - No peer dependency errors
+          - All warnings reviewed and documented
+          - Conflicts resolved if any
+        validation:
+          - "Run npm ls to check dependency tree"
+          - "Document any warnings"
+
+      - id: P0-009
+        title: "Test build with both v1 and v2 packages"
+        description: |
+          Verify TypeScript build succeeds with both SDK versions installed.
+          Expect some type errors at this stage (not yet migrated).
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-008]
+        acceptance_criteria:
+          - Build command runs (may have errors)
+          - No fatal build failures
+          - Both v1 and v2 types available
+        commands:
+          - "npm run build"
+        validation:
+          - "Document build errors for later fixing"
+          - "Verify build directory created"
+
+  # ============================================================================
+  # PHASE 3: IMPORT PATH UPDATES
+  # ============================================================================
+
+  - phase: 3
+    name: "Import Path Updates"
+    status: not_started
+    duration_hours: 1.5
+    tasks:
+
+      - id: P0-010
+        title: "Review codemod import transformations"
+        description: |
+          Review all import path changes made by codemod.
+          Verify imports point to correct v2 packages.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-009]
+        acceptance_criteria:
+          - All import transformations reviewed
+          - Incorrect imports identified
+          - List of manual import fixes created
+        validation:
+          - "grep 'from.*@modelcontextprotocol' src/ -r"
+          - "Verify package names"
+
+      - id: P0-011
+        title: "Fix transport import paths manually"
+        description: |
+          Update transport imports that codemod may have missed.
+          StdioServerTransport: @modelcontextprotocol/node/stdio
+          Express adapter: @modelcontextprotocol/express
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-010]
+        acceptance_criteria:
+          - Stdio transport imports from @modelcontextprotocol/node/stdio
+          - Express imports from @modelcontextprotocol/express
+          - No v1 transport imports remain
+        files_modified:
+          - src/server.ts
+        validation:
+          - "grep 'StdioServerTransport' src/ -r"
+          - "grep 'SSEServerTransport' src/ -r (should be none)"
+
+      - id: P0-012
+        title: "Update error class imports"
+        description: |
+          Update error imports from v1 to v2.
+          McpError → ProtocolError
+          ErrorCode → ProtocolErrorCode
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-011]
+        acceptance_criteria:
+          - ProtocolError imported from @modelcontextprotocol/server
+          - ProtocolErrorCode imported
+          - No McpError imports remain
+        files_modified:
+          - src/server.ts
+          - src/tools/*.ts (if errors used)
+        validation:
+          - "grep 'McpError' src/ -r (should be none)"
+          - "grep 'ProtocolError' src/ -r"
+
+      - id: P0-013
+        title: "Verify all imports resolve correctly"
+        description: |
+          Check that all imports resolve to installed packages.
+          Verify no broken import paths.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-012]
+        acceptance_criteria:
+          - All imports resolve
+          - No module not found errors
+          - TypeScript understands all imports
+        commands:
+          - "tsc --noEmit"
+        validation:
+          - "Check for import resolution errors"
+          - "Verify types available from imports"
+
+      - id: P0-014
+        title: "Run TypeScript type check"
+        description: |
+          Run full TypeScript type check.
+          May have type errors (signatures not yet updated), but no import errors.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-013]
+        acceptance_criteria:
+          - tsc runs without import errors
+          - Type errors cataloged
+          - No module resolution errors
+        commands:
+          - "tsc --noEmit"
+        validation:
+          - "Document type errors for next phase"
+
+  # ============================================================================
+  # PHASE 4: SERVER FACTORY PATTERN
+  # ============================================================================
+
+  - phase: 4
+    name: "Server Factory Pattern"
+    status: not_started
+    duration_hours: 2.5
+    tasks:
+
+      - id: P1-001
+        title: "Create buildServer() factory function"
+        description: |
+          Create a factory function that returns a new Server instance.
+          Enables per-request server instances for HTTP transport.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-014]
+        acceptance_criteria:
+          - buildServer() function created in src/server.ts
+          - Returns Server instance
+          - Server properly configured (name, version)
+          - Function signature: () => Server
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Verify function signature"
+          - "Test function returns valid server"
+        code_reference: "src/server.ts:280-291"
+
+      - id: P1-002
+        title: "Extract tool registration to separate function"
+        description: |
+          Create registerTools() function that registers all tools on a server.
+          Called by buildServer() factory.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-001]
+        acceptance_criteria:
+          - registerTools(server, obsClient) function created
+          - Calls all tool module initialize() functions
+          - Properly passes server and client references
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Verify all tool modules called"
+          - "Test tools registered correctly"
+
+      - id: P1-003
+        title: "Ensure OBS client singleton sharing"
+        description: |
+          Verify OBS client is created once and shared across all server instances.
+          Critical for maintaining WebSocket connection.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-002]
+        acceptance_criteria:
+          - OBS client created at module level (singleton)
+          - All server instances share same client
+          - No duplicate WebSocket connections
+          - Connection state consistent
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Verify obsClient created once at module level"
+          - "Test multiple buildServer() calls share client"
+
+      - id: P1-004
+        title: "Update server initialization logic"
+        description: |
+          Refactor server initialization to use factory pattern.
+          Update startServer() to call buildServer().
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-003]
+        acceptance_criteria:
+          - startServer() uses buildServer()
+          - Initialization logic refactored
+          - No duplicate server creation
+          - Tools initialized correctly
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Test startServer() creates server correctly"
+          - "Verify tools registered"
+
+      - id: P1-005
+        title: "Test factory pattern with stdio transport"
+        description: |
+          Test that factory pattern works with stdio transport.
+          Verify single server instance for stdio mode.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-004]
+        acceptance_criteria:
+          - Build succeeds
+          - Stdio mode starts without errors
+          - Server instance created
+          - Tools available
+        commands:
+          - "npm run build"
+          - "npm run start"
+        validation:
+          - "Verify server starts"
+          - "Check logs for errors"
+
+  # ============================================================================
+  # PHASE 5: STDIO TRANSPORT MIGRATION
+  # ============================================================================
+
+  - phase: 5
+    name: "Stdio Transport Migration"
+    status: not_started
+    duration_hours: 1.5
+    checkpoint: "Validation Checkpoint 1"
+    tasks:
+
+      - id: P0-015
+        title: "Update stdio transport imports"
+        description: |
+          Update StdioServerTransport import to v2 package.
+          From: @modelcontextprotocol/sdk/server/stdio.js
+          To: @modelcontextprotocol/node/stdio
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-005]
+        acceptance_criteria:
+          - Import updated to v2 package
+          - No v1 stdio imports remain
+          - TypeScript resolves import
+        files_modified:
+          - src/server.ts
+        validation:
+          - "grep 'StdioServerTransport' src/server.ts"
+
+      - id: P0-016
+        title: "Migrate to serveStdio() pattern"
+        description: |
+          Replace StdioServerTransport with serveStdio() helper.
+          Pattern: await serveStdio(() => buildServer());
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-015]
+        acceptance_criteria:
+          - serveStdio() imported from @modelcontextprotocol/server/stdio
+          - Server initialization uses serveStdio()
+          - Factory pattern integrated
+          - Old StdioServerTransport code removed
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Build succeeds"
+          - "No type errors in stdio code"
+        code_reference: "src/server.ts:270-274"
+
+      - id: P0-017
+        title: "Test stdio transport connectivity"
+        description: |
+          Start server in stdio mode and verify it accepts connections.
+          Test with MCP inspector or client.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-016]
+        acceptance_criteria:
+          - Server starts in stdio mode
+          - Connection established
+          - No errors in logs
+          - Handshake completes
+        commands:
+          - "npm run build && npm run start"
+        validation:
+          - "Server starts without errors"
+          - "Connection logs appear"
+
+      - id: P0-018
+        title: "Validate tool execution in stdio mode"
+        description: |
+          Test executing a simple tool in stdio mode.
+          Verify request/response cycle works.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-017]
+        acceptance_criteria:
+          - Tool list retrieved successfully
+          - Tool execution succeeds
+          - Response format correct
+          - No errors during execution
+        validation:
+          - "Execute obs-get-status tool"
+          - "Verify response structure"
+
+      - id: P0-019
+        title: "Test with MCP inspector"
+        description: |
+          Use MCP inspector to thoroughly test stdio mode.
+          Verify protocol compliance.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-018]
+        acceptance_criteria:
+          - MCP inspector connects
+          - Protocol version negotiated
+          - Tools listed correctly
+          - Sample tools execute
+        validation:
+          - "MCP inspector shows no errors"
+          - "Protocol compliance verified"
+
+  # ============================================================================
+  # PHASE 6: TOOL REGISTRATION API MIGRATION
+  # ============================================================================
+
+  - phase: 6
+    name: "Tool Registration API Migration"
+    status: not_started
+    duration_hours: 5.0
+    tasks:
+
+      - id: P1-006
+        title: "Create tool registration migration helper"
+        description: |
+          Create helper function or pattern for migrating tool registrations.
+          Standardize the migration approach across all tool modules.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-019]
+        acceptance_criteria:
+          - Migration pattern documented
+          - Helper function created (if needed)
+          - Example migration shown
+          - Pattern tested on one tool
+        deliverable: "tool-migration-pattern.md"
+        validation:
+          - "Test pattern on one tool file"
+
+      - id: P1-007
+        title: "Migrate tools/general.ts (3 tools)"
+        description: |
+          Migrate general tools to v2 registration API.
+          Update: obs-get-status, obs-get-version, obs-test-connection
+          Pattern: server.tool() → server.registerTool()
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-006]
+        acceptance_criteria:
+          - All 3 tools use registerTool()
+          - Handler signatures updated (extra → ctx)
+          - Schemas wrapped with z.object()
+          - No TypeScript errors
+        files_modified:
+          - src/tools/general.ts
+        validation:
+          - "Build succeeds"
+          - "Test one tool execution"
+        code_reference: "src/tools/general.ts:1-100"
+
+      - id: P1-008
+        title: "Migrate tools/scenes.ts"
+        description: |
+          Migrate scene-related tools to v2 API.
+          Update all tool registrations in this module.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-007]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/scenes.ts
+        validation:
+          - "TypeScript compiles"
+          - "Spot-check one tool"
+
+      - id: P1-009
+        title: "Migrate tools/sources.ts"
+        description: |
+          Migrate source-related tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-008]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/sources.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-010
+        title: "Migrate tools/scene-items.ts"
+        description: |
+          Migrate scene item tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-009]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/scene-items.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-011
+        title: "Migrate tools/streaming.ts"
+        description: |
+          Migrate streaming control tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-010]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/streaming.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-012
+        title: "Migrate tools/transitions.ts"
+        description: |
+          Migrate transition tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-011]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/transitions.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-013
+        title: "Migrate tools/config.ts"
+        description: |
+          Migrate configuration tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-012]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/config.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-014
+        title: "Migrate tools/filters.ts"
+        description: |
+          Migrate filter tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-013]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/filters.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-015
+        title: "Migrate tools/inputs.ts"
+        description: |
+          Migrate input tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-014]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/inputs.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-016
+        title: "Migrate tools/media-inputs.ts"
+        description: |
+          Migrate media input tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-015]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/media-inputs.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-017
+        title: "Migrate tools/outputs.ts"
+        description: |
+          Migrate output tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-016]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/outputs.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-018
+        title: "Migrate tools/record.ts"
+        description: |
+          Migrate recording tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-017]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/record.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-019
+        title: "Migrate tools/ui.ts"
+        description: |
+          Migrate UI tools to v2 API.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-018]
+        acceptance_criteria:
+          - All tools use registerTool()
+          - Handlers updated
+          - Schemas wrapped
+          - Build succeeds
+        files_modified:
+          - src/tools/ui.ts
+        validation:
+          - "TypeScript compiles"
+
+      - id: P1-020
+        title: "Test all tools in stdio mode"
+        description: |
+          End-to-end test of all migrated tools in stdio mode.
+          Verify no regressions.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-019]
+        acceptance_criteria:
+          - All tools listed correctly
+          - Sample tools from each module execute
+          - No errors in execution
+          - Response formats correct
+        validation:
+          - "Test 3-5 tools from different modules"
+          - "Verify error handling"
+
+  # ============================================================================
+  # PHASE 7: HTTP TRANSPORT MIGRATION
+  # ============================================================================
+
+  - phase: 7
+    name: "HTTP Transport Migration"
+    status: not_started
+    duration_hours: 3.5
+    checkpoint: "Validation Checkpoint 2"
+    tasks:
+
+      - id: P0-020
+        title: "Install @modelcontextprotocol/express"
+        description: |
+          Verify Express adapter package is installed (from Phase 2).
+          Check version and dependencies.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-020]
+        acceptance_criteria:
+          - "@modelcontextprotocol/express" in package.json
+          - Package installed in node_modules
+          - Correct version (^2.0.0)
+        validation:
+          - "npm ls @modelcontextprotocol/express"
+
+      - id: P0-021
+        title: "Import createExpressMcpHandler"
+        description: |
+          Add import for Express adapter in src/server.ts.
+          Prepare for HTTP transport migration.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-020]
+        acceptance_criteria:
+          - Import added to src/server.ts
+          - TypeScript resolves import
+          - No import errors
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Build succeeds"
+        code_reference: "src/server.ts:228"
+
+      - id: P0-022
+        title: "Remove SSE transport code"
+        description: |
+          Remove old SSEServerTransport code from src/server.ts.
+          Delete /sse and /messages routes.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-021]
+        acceptance_criteria:
+          - SSEServerTransport import removed
+          - /sse route removed
+          - /messages route removed
+          - transport variable declarations removed
+        files_modified:
+          - src/server.ts
+        validation:
+          - "grep 'SSEServerTransport' src/ -r (should be none)"
+          - "Build succeeds"
+        code_reference: "src/server.ts:178-197"
+
+      - id: P0-023
+        title: "Implement Express adapter integration"
+        description: |
+          Integrate createExpressMcpHandler with Express app.
+          Pattern: const mcpHandler = createExpressMcpHandler(() => buildServer());
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-022]
+        acceptance_criteria:
+          - mcpHandler created with factory
+          - Factory returns buildServer() result
+          - Handler integrated with Express app
+          - Per-request lifecycle implemented
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Build succeeds"
+          - "No type errors"
+        code_reference: "src/server.ts:228-237"
+
+      - id: P0-024
+        title: "Update HTTP routes (/sse → /mcp)"
+        description: |
+          Update HTTP route from /sse to /mcp.
+          Use app.use('/mcp', mcpHandler) pattern.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-023]
+        acceptance_criteria:
+          - Route changed to /mcp
+          - Handler attached to route
+          - Old routes removed
+          - Endpoint documented
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Verify route in code"
+          - "Update any documentation"
+
+      - id: P0-025
+        title: "Preserve CORS middleware"
+        description: |
+          Verify CORS middleware still applied before MCP handler.
+          Ensure cross-origin requests work.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-024]
+        acceptance_criteria:
+          - app.use(cors()) present
+          - CORS applied before /mcp route
+          - CORS headers in responses
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Test OPTIONS request"
+          - "Verify CORS headers"
+        code_reference: "src/server.ts:156"
+
+      - id: P0-026
+        title: "Preserve Bearer Token auth middleware"
+        description: |
+          Verify authentication middleware still works.
+          Ensure auth checked before MCP handler.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-025]
+        acceptance_criteria:
+          - Auth middleware present
+          - Auth applied before /mcp route
+          - Unauthorized requests rejected
+          - Authorized requests pass through
+        files_modified:
+          - src/server.ts
+        validation:
+          - "Test request without auth header"
+          - "Test request with invalid token"
+          - "Test request with valid token"
+        code_reference: "src/server.ts:165-176"
+
+      - id: P0-027
+        title: "Test HTTP transport connectivity"
+        description: |
+          Start server in HTTP mode (MCP_TRANSPORT=sse).
+          Verify server starts and accepts requests.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-026]
+        acceptance_criteria:
+          - Server starts in HTTP mode
+          - Port listening (default 8080)
+          - No startup errors
+          - Health check passes
+        commands:
+          - "MCP_TRANSPORT=sse npm run start"
+        validation:
+          - "Server logs show HTTP listening"
+          - "No errors in startup"
+
+      - id: P0-028
+        title: "Validate auth middleware"
+        description: |
+          Test authentication middleware with various scenarios.
+          Ensure proper 401 responses for unauthorized requests.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-027]
+        acceptance_criteria:
+          - No auth token: passes (if MCP_AUTH_TOKEN not set)
+          - No auth token: fails with 401 (if MCP_AUTH_TOKEN set)
+          - Invalid token: fails with 401
+          - Valid token: succeeds
+        validation:
+          - "curl without Authorization header"
+          - "curl with invalid token"
+          - "curl with valid token"
+
+      - id: P0-029
+        title: "Test tool execution over HTTP"
+        description: |
+          Execute tools via HTTP transport.
+          Verify request/response cycle works.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-028]
+        acceptance_criteria:
+          - Tools listed via HTTP
+          - Tool execution succeeds
+          - Response format correct
+          - No errors during execution
+        validation:
+          - "Execute obs-get-status via HTTP"
+          - "Verify response structure"
+
+  # ============================================================================
+  # PHASE 8: ERROR HANDLING MIGRATION
+  # ============================================================================
+
+  - phase: 8
+    name: "Error Handling Migration"
+    status: not_started
+    duration_hours: 1.5
+    tasks:
+
+      - id: P1-021
+        title: "Replace McpError with ProtocolError"
+        description: |
+          Find and replace all McpError usage with ProtocolError.
+          Update imports and error instantiation.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-029]
+        acceptance_criteria:
+          - No McpError references in code
+          - ProtocolError imported correctly
+          - All error throws updated
+          - Build succeeds
+        files_modified:
+          - src/server.ts
+          - src/tools/*.ts (if used)
+        validation:
+          - "grep 'McpError' src/ -r (should be none)"
+          - "grep 'ProtocolError' src/ -r"
+
+      - id: P1-022
+        title: "Replace ErrorCode with ProtocolErrorCode"
+        description: |
+          Update all ErrorCode references to ProtocolErrorCode.
+          Verify error codes still valid.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-021]
+        acceptance_criteria:
+          - No ErrorCode references (v1)
+          - ProtocolErrorCode imported
+          - Error codes valid in v2
+          - Build succeeds
+        files_modified:
+          - src/server.ts
+          - src/tools/*.ts (if used)
+        validation:
+          - "Verify error code names match v2"
+
+      - id: P1-023
+        title: "Update error handling in tool handlers"
+        description: |
+          Review and update error handling in all tool handlers.
+          Ensure errors thrown correctly.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-022]
+        acceptance_criteria:
+          - All tools handle errors correctly
+          - Error responses formatted correctly
+          - No unhandled promise rejections
+        validation:
+          - "Test error scenarios in tools"
+          - "Verify error responses"
+
+      - id: P1-024
+        title: "Test error scenarios"
+        description: |
+          Deliberately trigger errors and verify proper handling.
+          Test connection errors, invalid params, etc.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-023]
+        acceptance_criteria:
+          - Connection error handled
+          - Invalid param error handled
+          - OBS disconnected error handled
+          - All errors return proper responses
+        validation:
+          - "Disconnect OBS, call tool"
+          - "Call tool with invalid params"
+          - "Verify error messages"
+
+      - id: P1-025
+        title: "Validate error responses"
+        description: |
+          Verify error response format matches MCP protocol.
+          Check error codes and messages.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-024]
+        acceptance_criteria:
+          - Error responses valid JSON-RPC
+          - Error codes correct
+          - Error messages helpful
+          - Stack traces not leaked
+        validation:
+          - "Inspect error response structure"
+          - "Verify no sensitive info in errors"
+
+  # ============================================================================
+  # PHASE 9: TEST MIGRATION & VALIDATION
+  # ============================================================================
+
+  - phase: 9
+    name: "Test Migration & Validation"
+    status: not_started
+    duration_hours: 3.5
+    checkpoint: "Validation Checkpoint 3"
+    tasks:
+
+      - id: P0-030
+        title: "Update src/server.test.ts"
+        description: |
+          Update server tests for v2 API.
+          Fix import paths, mock objects, test assertions.
+        priority: P0
+        status: not_started
+        estimated_hours: 1.0
+        dependencies: [P1-025]
+        acceptance_criteria:
+          - All imports updated
+          - Mocks updated for v2
+          - Tests pass
+          - Coverage maintained
+        files_modified:
+          - src/server.test.ts
+        validation:
+          - "npm test src/server.test.ts"
+
+      - id: P0-031
+        title: "Update src/client.test.ts (if affected)"
+        description: |
+          Review and update client tests if affected by migration.
+          OBS client should be largely unchanged.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-030]
+        acceptance_criteria:
+          - Client tests reviewed
+          - Any necessary updates made
+          - Tests pass
+        files_modified:
+          - src/client.test.ts
+        validation:
+          - "npm test src/client.test.ts"
+
+      - id: P0-032
+        title: "Update src/index.test.ts"
+        description: |
+          Update index/main tests for v2.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-031]
+        acceptance_criteria:
+          - Tests updated
+          - Tests pass
+        files_modified:
+          - src/index.test.ts
+        validation:
+          - "npm test src/index.test.ts"
+
+      - id: P0-033
+        title: "Add stdio transport integration test"
+        description: |
+          Create integration test for stdio transport.
+          Test end-to-end connection and tool execution.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-032]
+        acceptance_criteria:
+          - Integration test created
+          - Tests stdio connection
+          - Tests tool execution
+          - Test passes
+        files_created:
+          - src/integration/stdio.test.ts (or similar)
+        validation:
+          - "Run integration test"
+
+      - id: P0-034
+        title: "Add HTTP transport integration test"
+        description: |
+          Create integration test for HTTP transport.
+          Test connection, auth, and tool execution.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-033]
+        acceptance_criteria:
+          - Integration test created
+          - Tests HTTP connection
+          - Tests authentication
+          - Tests tool execution
+          - Test passes
+        files_created:
+          - src/integration/http.test.ts (or similar)
+        validation:
+          - "Run integration test"
+
+      - id: P0-035
+        title: "Add authentication test cases"
+        description: |
+          Create tests for authentication scenarios.
+          Test with/without token, valid/invalid token.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-034]
+        acceptance_criteria:
+          - Auth test cases created
+          - No token scenario tested
+          - Invalid token scenario tested
+          - Valid token scenario tested
+          - All tests pass
+        validation:
+          - "Run auth tests"
+
+      - id: P0-036
+        title: "Test OBS reconnection logic"
+        description: |
+          Test OBS WebSocket reconnection behavior.
+          Verify auto-reconnect works with v2.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-035]
+        acceptance_criteria:
+          - Reconnection tested
+          - Auto-reconnect works
+          - Connection state correct
+          - No memory leaks
+        validation:
+          - "Stop OBS, verify reconnection attempts"
+          - "Start OBS, verify connection established"
+
+      - id: P0-037
+        title: "Test tool execution with OBS disconnected"
+        description: |
+          Test tool behavior when OBS is not connected.
+          Verify proper error messages.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-036]
+        acceptance_criteria:
+          - Tools fail gracefully when OBS disconnected
+          - Error messages clear and helpful
+          - No crashes or hangs
+        validation:
+          - "Stop OBS, execute tool, verify error"
+
+      - id: P0-038
+        title: "Run full test suite"
+        description: |
+          Run complete test suite and verify all tests pass.
+          Check coverage metrics.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-037]
+        acceptance_criteria:
+          - npm test succeeds
+          - All tests pass
+          - Coverage >= previous level
+          - No skipped tests
+        commands:
+          - "npm test"
+        validation:
+          - "Review test output"
+          - "Check coverage report"
+
+  # ============================================================================
+  # PHASE 10: MANUAL VALIDATION
+  # ============================================================================
+
+  - phase: 10
+    name: "Manual Validation"
+    status: not_started
+    duration_hours: 2.5
+    tasks:
+
+      - id: P0-039
+        title: "Test stdio mode with real OBS"
+        description: |
+          Manual end-to-end test of stdio mode with OBS Studio.
+          Execute various tools and verify functionality.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-038]
+        acceptance_criteria:
+          - Server starts in stdio mode
+          - Connects to MCP inspector/client
+          - All tool categories tested
+          - No errors during normal operation
+        validation:
+          - "Start OBS Studio"
+          - "Start server in stdio mode"
+          - "Connect MCP inspector"
+          - "Test 5-10 tools"
+
+      - id: P0-040
+        title: "Test HTTP mode with real OBS"
+        description: |
+          Manual end-to-end test of HTTP mode with OBS Studio.
+          Test CORS, authentication, tool execution.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-039]
+        acceptance_criteria:
+          - Server starts in HTTP mode
+          - CORS working
+          - Authentication working
+          - All tool categories tested
+        validation:
+          - "Start server with MCP_TRANSPORT=sse"
+          - "Test with HTTP client"
+          - "Verify CORS headers"
+          - "Test auth scenarios"
+
+      - id: P0-041
+        title: "Test Bearer Token authentication"
+        description: |
+          Thoroughly test Bearer Token authentication.
+          Test with MCP_AUTH_TOKEN set and unset.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-040]
+        acceptance_criteria:
+          - No token set: open access works
+          - Token set, no header: 401 error
+          - Token set, wrong token: 401 error
+          - Token set, correct token: access granted
+        validation:
+          - "Test all auth scenarios manually"
+
+      - id: P0-042
+        title: "Test connection resilience"
+        description: |
+          Test server behavior with OBS connection issues.
+          Stop/start OBS, test reconnection.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-041]
+        acceptance_criteria:
+          - Server starts with OBS stopped
+          - Auto-reconnection attempts work
+          - Server connects when OBS starts
+          - Tools work after reconnection
+          - Graceful degradation when OBS stopped
+        validation:
+          - "Start server, then start OBS"
+          - "Stop OBS while server running"
+          - "Restart OBS, verify reconnection"
+
+      - id: P0-043
+        title: "Test all tool categories"
+        description: |
+          Systematically test tools from all 13 categories.
+          Verify functionality preserved.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P0-042]
+        acceptance_criteria:
+          - General tools tested
+          - Scene tools tested
+          - Source tools tested
+          - Scene item tools tested
+          - Streaming tools tested
+          - Transition tools tested
+          - Config tools tested
+          - Filter tools tested
+          - Input tools tested
+          - Media input tools tested
+          - Output tools tested
+          - Record tools tested
+          - UI tools tested
+        validation:
+          - "Test 1-2 tools from each category"
+          - "Document any issues"
+
+      - id: P0-044
+        title: "Validate error handling"
+        description: |
+          Test error scenarios and verify proper handling.
+          Invalid parameters, disconnected OBS, etc.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-043]
+        acceptance_criteria:
+          - Invalid parameters return clear errors
+          - OBS disconnected returns helpful message
+          - Errors don't crash server
+          - Error format matches protocol
+        validation:
+          - "Call tool with invalid params"
+          - "Call tool with OBS disconnected"
+          - "Verify error messages"
+
+      - id: P0-045
+        title: "Performance validation"
+        description: |
+          Verify no performance regressions.
+          Test response times, memory usage.
+        priority: P0
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-044]
+        acceptance_criteria:
+          - Tool execution time similar to v1
+          - Memory usage reasonable
+          - No memory leaks
+          - Server stable over time
+        validation:
+          - "Monitor memory usage"
+          - "Execute tools repeatedly"
+          - "Check for memory leaks"
+
+  # ============================================================================
+  # PHASE 11: CLEANUP & FINALIZATION
+  # ============================================================================
+
+  - phase: 11
+    name: "Cleanup & Finalization"
+    status: not_started
+    duration_hours: 1.5
+    checkpoint: "Validation Checkpoint 4"
+    tasks:
+
+      - id: P1-026
+        title: "Remove @modelcontextprotocol/sdk from package.json"
+        description: |
+          Remove v1 SDK dependency now that migration is complete.
+          Final step of staged migration.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P0-045]
+        acceptance_criteria:
+          - @modelcontextprotocol/sdk removed from dependencies
+          - No v1 imports remain in code
+          - Build succeeds
+          - Tests pass
+        files_modified:
+          - package.json
+        validation:
+          - "npm uninstall @modelcontextprotocol/sdk"
+          - "npm run build"
+          - "npm test"
+
+      - id: P1-027
+        title: "Remove deprecated code and comments"
+        description: |
+          Clean up any deprecated code, TODO comments, migration notes.
+          Remove temporary scaffolding.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-026]
+        acceptance_criteria:
+          - No v1-related comments
+          - No TODO migration comments
+          - No dead code
+          - Code clean and readable
+        validation:
+          - "grep 'TODO.*migration' src/ -r"
+          - "grep 'v1' src/ -r"
+
+      - id: P1-028
+        title: "Clean up temporary migration code"
+        description: |
+          Remove any temporary helper functions or migration utilities.
+          Finalize code structure.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-027]
+        acceptance_criteria:
+          - No migration helpers remain
+          - Code structure finalized
+          - No temporary files
+        validation:
+          - "Review for temporary code"
+
+      - id: P1-029
+        title: "Update README.md"
+        description: |
+          Update README to reflect v2 SDK usage.
+          Update installation, setup, and usage instructions.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-028]
+        acceptance_criteria:
+          - Dependencies updated in README
+          - Setup instructions updated
+          - Version info updated
+          - Examples updated if needed
+        files_modified:
+          - README.md
+        validation:
+          - "Review README accuracy"
+
+      - id: P1-030
+        title: "Update CLAUDE.md if needed"
+        description: |
+          Update project guidelines if SDK migration affects conventions.
+          Update any SDK-specific guidance.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-029]
+        acceptance_criteria:
+          - Guidelines reviewed
+          - SDK references updated
+          - Examples updated
+        files_modified:
+          - CLAUDE.md
+        validation:
+          - "Review for v1 references"
+
+      - id: P1-031
+        title: "Run final build"
+        description: |
+          Run production build and verify success.
+          Check output for any warnings.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-030]
+        acceptance_criteria:
+          - npm run build succeeds
+          - No errors
+          - No warnings
+          - Build output clean
+        commands:
+          - "npm run build"
+        validation:
+          - "Check build output"
+          - "Verify build directory"
+
+      - id: P1-032
+        title: "Run final test suite"
+        description: |
+          Final complete test run before completion.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-031]
+        acceptance_criteria:
+          - npm test succeeds
+          - All tests pass
+          - Coverage acceptable
+        commands:
+          - "npm test"
+        validation:
+          - "Review test output"
+
+      - id: P1-033
+        title: "Verify package.json scripts"
+        description: |
+          Verify all package.json scripts still work.
+          Test build, start, test, deploy.
+        priority: P1
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P1-032]
+        acceptance_criteria:
+          - npm run build works
+          - npm run start works
+          - npm test works
+          - npm run deploy works (dry run)
+        validation:
+          - "Test each script"
+
+  # ============================================================================
+  # PHASE 12: DOCUMENTATION & HANDOFF
+  # ============================================================================
+
+  - phase: 12
+    name: "Documentation & Handoff"
+    status: not_started
+    duration_hours: 1.5
+    tasks:
+
+      - id: P2-001
+        title: "Create migration summary document"
+        description: |
+          Document the migration process and outcomes.
+          Summarize changes, decisions, issues encountered.
+        priority: P2
+        status: not_started
+        estimated_hours: 0.5
+        dependencies: [P1-033]
+        acceptance_criteria:
+          - Summary document created
+          - Key changes documented
+          - Issues and resolutions documented
+          - Lessons learned captured
+        deliverable: "planning/sprint-12-twql41/migration-summary.md"
+
+      - id: P2-002
+        title: "Document API changes for users"
+        description: |
+          Document any user-facing API changes.
+          Create upgrade guide for server users.
+        priority: P2
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P2-001]
+        acceptance_criteria:
+          - User-facing changes documented
+          - Upgrade guide created
+          - Breaking changes listed
+          - Migration path clear
+        deliverable: "docs/v2-upgrade-guide.md"
+
+      - id: P2-003
+        title: "Update deployment documentation"
+        description: |
+          Update deployment docs for v2 SDK.
+          Verify Cloud Run deployment still works.
+        priority: P2
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P2-002]
+        acceptance_criteria:
+          - Deployment docs reviewed
+          - Docker build tested
+          - Cloud Run deployment verified
+          - Environment variables documented
+        validation:
+          - "Test Docker build"
+          - "Verify cloudbuild.yaml still works"
+
+      - id: P2-004
+        title: "Create troubleshooting guide"
+        description: |
+          Document common issues and solutions.
+          Include migration-specific troubleshooting.
+        priority: P2
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P2-003]
+        acceptance_criteria:
+          - Troubleshooting guide created
+          - Common issues documented
+          - Solutions provided
+          - Migration issues included
+        deliverable: "docs/troubleshooting.md"
+
+      - id: P2-005
+        title: "Update changelog"
+        description: |
+          Update CHANGELOG.md with v2 migration details.
+          Document breaking changes and new features.
+        priority: P2
+        status: not_started
+        estimated_hours: 0.25
+        dependencies: [P2-004]
+        acceptance_criteria:
+          - CHANGELOG.md updated
+          - Version bumped appropriately
+          - Breaking changes listed
+          - Migration notes included
+        files_modified:
+          - CHANGELOG.md
+          - package.json (version)
+
+# ============================================================================
+# SUMMARY STATISTICS
+# ============================================================================
+
+summary:
+  total_tasks: 88
+  by_priority:
+    P0: 45
+    P1: 33
+    P2: 5
+  by_phase:
+    phase_0: 0  # Completed before backlog
+    phase_1: 4
+    phase_2: 5
+    phase_3: 5
+    phase_4: 5
+    phase_5: 5
+    phase_6: 15
+    phase_7: 10
+    phase_8: 5
+    phase_9: 9
+    phase_10: 7
+    phase_11: 8
+    phase_12: 5
+  estimated_total_hours: 24
+  validation_checkpoints: 4
+
+completion_criteria:
+  technical:
+    - Zero TypeScript compilation errors
+    - 100% test pass rate
+    - Zero v1 SDK references
+    - Both transports functional
+  functional:
+    - All 50+ tools working
+    - Authentication preserved
+    - Reconnection logic working
+    - Error handling correct
+  quality:
+    - Code review completed
+    - Documentation updated
+    - No security regressions
+    - Performance maintained
+
+# ============================================================================
+# NOTES
+# ============================================================================
+
+notes:
+  - This backlog represents a complete breakdown of the migration effort
+  - Tasks are designed to be independently trackable and testable
+  - Dependencies ensure proper sequencing
+  - Validation checkpoints prevent proceeding with broken code
+  - Staged migration approach allows rollback at any point
+  - All tasks have clear acceptance criteria
+  - Total effort estimate: 24 hours (conservative, includes buffer)

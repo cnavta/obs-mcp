@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { OBSWebSocketClient } from "../client.js";
 import { z } from "zod";
 
@@ -18,23 +18,22 @@ import * as record from "./record.js";
 import * as ui from "./ui.js";
 
 // Export the initialization function for all tools
-export async function initialize(server: McpServer, client: OBSWebSocketClient): Promise<void> {
-  // Initialize all tool modules
-  await Promise.all([
-    general.initialize(server, client),
-    scenes.initialize(server, client),
-    sources.initialize(server, client),
-    sceneItems.initialize(server, client),
-    streaming.initialize(server, client),
-    transitions.initialize(server, client),
-    config.initialize(server, client),
-    filters.initialize(server, client),
-    inputs.initialize(server, client),
-    mediaInputs.initialize(server, client),
-    outputs.initialize(server, client),
-    record.initialize(server, client),
-    ui.initialize(server, client)
-  ]);
+// Note: Changed to synchronous in v2 (tool registration is now synchronous)
+export function initialize(server: McpServer, client: OBSWebSocketClient): void {
+  // Initialize all tool modules synchronously
+  general.initialize(server, client);
+  scenes.initialize(server, client);
+  sources.initialize(server, client);
+  sceneItems.initialize(server, client);
+  streaming.initialize(server, client);
+  transitions.initialize(server, client);
+  config.initialize(server, client);
+  filters.initialize(server, client);
+  inputs.initialize(server, client);
+  mediaInputs.initialize(server, client);
+  outputs.initialize(server, client);
+  record.initialize(server, client);
+  ui.initialize(server, client);
 }
 
 // Export tool modules

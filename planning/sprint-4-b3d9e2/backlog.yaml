@@ -1,0 +1,58 @@
+meta:
+  backlog_id: obs-mcp-registry-migration
+  updated_at: 2024-12-24
+  status_values: [todo, in_progress, blocked, done]
+
+sprint:
+  id: sprint-4-b3d9e2
+  start: 2024-12-24
+  end: 2024-12-31
+  wip_limit: 3
+  goal: "Update Cloud Build to use Artifact Registry."
+
+items:
+  - id: REG-001
+    title: "Update cloudbuild.yaml to Artifact Registry"
+    priority: P0
+    status: done
+    effort: S
+    owner: agent
+    deps: []
+    blocked_reason: null
+    acceptance:
+      - "cloudbuild.yaml uses us-central1-docker.pkg.dev/$PROJECT_ID/obs-mcp"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T11:58:00Z
+        note: "Updated all image references in cloudbuild.yaml."
+
+  - id: REG-002
+    title: "Update README.md references"
+    priority: P1
+    status: done
+    effort: S
+    owner: agent
+    deps: [REG-001]
+    blocked_reason: null
+    acceptance:
+      - "README instructions reflect the change if applicable"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T11:58:00Z
+        note: "Checked README.md; no changes required."
+
+  - id: REG-003
+    title: "Sprint Validation and Closure"
+    priority: P2
+    status: done
+    effort: S
+    owner: agent
+    deps: [REG-001, REG-002]
+    blocked_reason: null
+    acceptance:
+      - "validate_deliverable.sh passes"
+      - "verification-report.md created"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T11:59:00Z
+        note: "Validation passed and reports created."

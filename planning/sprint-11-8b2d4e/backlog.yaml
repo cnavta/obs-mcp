@@ -1,0 +1,16 @@
+tasks:
+  - id: 1
+    title: "Enhance logger with timestamps"
+    status: "todo"
+  - id: 2
+    title: "Wrap server.tool for request logging"
+    status: "todo"
+  - id: 3
+    title: "Add HTTP logging for SSE"
+    status: "todo"
+  - id: 4
+    title: "Create validation script"
+    status: "todo"
+  - id: 5
+    title: "Final verification and PR"
+    status: "todo"

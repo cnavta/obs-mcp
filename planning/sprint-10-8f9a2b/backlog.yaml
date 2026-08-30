@@ -1,0 +1,57 @@
+meta:
+  backlog_id: sprint-10-8f9a2b-backlog
+  updated_at: "2025-12-24"
+  status_values: [todo, in_progress, blocked, done]
+
+items:
+  - id: SSC-001
+    title: "Update OBSWebSocketClient for self-signed certs"
+    priority: P0
+    status: done
+    effort: S
+    owner: agent
+    acceptance:
+      - "WebSocket constructor receives rejectUnauthorized: false when OBS_WEBSOCKET_SELF_SIGNED=true"
+    updated_at: "2025-12-24"
+    log:
+      - at: 2025-12-24T13:17:00Z
+        note: "Modified OBSWebSocketClient to accept options and pass them to WebSocket."
+
+  - id: SSC-002
+    title: "Update server.ts to pass self-signed config"
+    priority: P1
+    status: done
+    effort: S
+    owner: agent
+    acceptance:
+      - "OBSWebSocketClient is instantiated with self-signed preference from env"
+    updated_at: "2025-12-24"
+    log:
+      - at: 2025-12-24T13:17:30Z
+        note: "Updated server.ts to read OBS_WEBSOCKET_SELF_SIGNED and pass it to client."
+
+  - id: SSC-003
+    title: "Add unit tests for self-signed cert config"
+    priority: P1
+    status: done
+    effort: M
+    owner: agent
+    acceptance:
+      - "Tests verify correct option passing to WebSocket"
+    updated_at: "2025-12-24"
+    log:
+      - at: 2025-12-24T13:18:00Z
+        note: "Created src/client.test.ts with mocks to verify WebSocket options."
+
+  - id: SSC-004
+    title: "Update README.md"
+    priority: P2
+    status: done
+    effort: S
+    owner: agent
+    acceptance:
+      - "OBS_WEBSOCKET_SELF_SIGNED is documented"
+    updated_at: "2025-12-24"
+    log:
+      - at: 2025-12-24T13:18:30Z
+        note: "Documented OBS_WEBSOCKET_SELF_SIGNED in Environment Variables section."

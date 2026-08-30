@@ -1,0 +1,44 @@
+meta:
+  backlog_id: sprint-8-b7a4c2-backlog
+  updated_at: "2024-12-24"
+  status_values: [todo, in_progress, blocked, done]
+
+items:
+  - id: VPC-001
+    title: "Update cloudbuild.yaml for conditional VPC/Ingress"
+    priority: P0
+    status: done
+    effort: S
+    owner: agent
+    acceptance:
+      - "cloudbuild.yaml uses bash to conditionally add flags"
+    updated_at: "2024-12-24"
+    log:
+      - at: "2024-12-24T12:48:30Z"
+        note: "Implemented conditional flags using bash in cloudbuild.yaml"
+
+  - id: VPC-002
+    title: "Update package.json to pass VPC_CONNECTOR"
+    priority: P0
+    status: done
+    effort: S
+    owner: agent
+    acceptance:
+      - "deploy script passes _VPC_CONNECTOR substitution"
+    updated_at: "2024-12-24"
+    log:
+      - at: "2024-12-24T12:48:40Z"
+        note: "Added _VPC_CONNECTOR substitution to deploy script"
+
+  - id: VPC-003
+    title: "Create validation script and verify"
+    priority: P1
+    status: done
+    effort: S
+    owner: agent
+    acceptance:
+      - "validate_deliverable.sh passes"
+    updated_at: "2024-12-24"
+    log:
+      - at: "2024-12-24T12:48:55Z"
+        note: "Validation script created and executed successfully"

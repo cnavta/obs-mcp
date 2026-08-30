@@ -3,9 +3,9 @@
 import { startServer } from "./server.js";
 
 const logger = {
-  log: (message: string) => console.log(message),
-  error: (message: string) => console.error(message),
-  debug: (message: string) => console.debug(message),
+  log: (message: string) => console.error(`[${new Date().toISOString()}] LOG: ${message}`),
+  error: (message: string) => console.error(`[${new Date().toISOString()}] ERROR: ${message}`),
+  debug: (message: string) => console.error(`[${new Date().toISOString()}] DEBUG: ${message}`),
 };
 
 // Set up better error handling

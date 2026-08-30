@@ -1,0 +1,10 @@
+id: sprint-7-c7b2d1
+title: "Fix Cloud Build Image Tag Error"
+goal: "Resolve the 'invalid image name' error in Cloud Build caused by empty COMMIT_SHA in manual builds."
+owner: "Junie"
+createdAt: "2024-12-24T12:35:00Z"
+status: "planning"
+links:
+  branch: "feature/sprint-7-c7b2d1-fix-cloudbuild-tag"
+notes: |
+  The error occurs because $COMMIT_SHA is not automatically populated during manual 'gcloud builds submit' calls.

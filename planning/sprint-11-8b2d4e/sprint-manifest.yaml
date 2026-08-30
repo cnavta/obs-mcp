@@ -1,0 +1,11 @@
+id: sprint-11-8b2d4e
+title: "Explicit Request Logging"
+goal: "Add explicit logging for all MCP tool requests and SSE HTTP requests to improve debuggability."
+owner: "Junie"
+createdAt: "2025-12-24T13:50:00Z"
+status: "planning"
+links:
+  branch: "feature/sprint-11-8b2d4e-explicit-request-logging"
+notes: |
+  We will wrap the MCP server's tool registration to log incoming requests and their outcomes.
+  We will also add middleware to the Express server (used for SSE) to log HTTP requests.

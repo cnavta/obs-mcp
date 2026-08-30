@@ -1,0 +1,5 @@
+pr_url: null
+branch: feature/sprint-3-e7a2b9-implementation
+status: failed
+error: "403 Forbidden: Permission denied to cnavta/obs-mcp.git"
+notes: "Local changes committed but could not be pushed to the remote repository due to permission issues."

@@ -1,0 +1,129 @@
+meta:
+  backlog_id: obs-mcp-implementation
+  updated_at: 2025-12-24
+  status_values: [todo, in_progress, blocked, done]
+
+sprint:
+  id: sprint-3-e7a2b9
+  start: 2024-12-24
+  end: 2025-01-07
+  wip_limit: 3
+  goal: "Implement remote access and containerization for OBS MCP server."
+
+items:
+  - id: IMP-001
+    title: "Install and configure Express dependencies"
+    priority: P0
+    status: done
+    effort: S
+    owner: agent
+    deps: []
+    blocked_reason: null
+    acceptance:
+      - "package.json updated with express and types"
+      - "npm install succeeds"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T11:45:00Z
+        note: "Started implementation sprint; moving task to in_progress."
+      - at: 2024-12-24T11:46:00Z
+        note: "Installed express, cors, dotenv and types."
+
+  - id: IMP-002
+    title: "Implement SSE Transport in server.ts"
+    priority: P0
+    status: done
+    effort: M
+    owner: agent
+    deps: [IMP-001]
+    blocked_reason: null
+    acceptance:
+      - "Server supports MCP_TRANSPORT=sse"
+      - "GET /sse endpoint active in sse mode"
+      - "POST /messages endpoint active in sse mode"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T11:55:00Z
+        note: "Implemented Express-based SSE transport logic in server.ts."
+
+  - id: IMP-003
+    title: "Implement Bearer Token Authentication"
+    priority: P0
+    status: done
+    effort: S
+    owner: agent
+    deps: [IMP-002]
+    blocked_reason: null
+    acceptance:
+      - "SSE endpoints return 401 without valid token"
+      - "Token configurable via MCP_AUTH_TOKEN"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T11:58:00Z
+        note: "Implemented global Bearer Token auth middleware in SSE app."
+
+  - id: IMP-004
+    title: "Create Dockerfile and docker-compose.yml"
+    priority: P1
+    status: done
+    effort: M
+    owner: agent
+    deps: [IMP-002]
+    blocked_reason: null
+    acceptance:
+      - "Multi-stage Dockerfile optimized for size"
+      - "Non-root user used in final image"
+      - "docker-compose up starts the server correctly"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T12:00:00Z
+        note: "Created multi-stage Dockerfile and docker-compose.yml."
+
+  - id: IMP-005
+    title: "Configure Cloud Build (cloudbuild.yaml)"
+    priority: P2
+    status: done
+    effort: S
+    owner: agent
+    deps: [IMP-004]
+    blocked_reason: null
+    acceptance:
+      - "cloudbuild.yaml exists and defines build/deploy steps"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T12:02:00Z
+        note: "Created cloudbuild.yaml for Cloud Run deployment."
+
+  - id: IMP-006
+    title: "Unit and Integration Testing"
+    priority: P1
+    status: done
+    effort: M
+    owner: agent
+    deps: [IMP-003]
+    blocked_reason: null
+    acceptance:
+      - "Tests cover transport switching"
+      - "Tests cover auth middleware"
+      - "All tests pass"
+    updated_at: 2024-12-24
+    log:
+      - at: 2024-12-24T12:05:00Z
+        note: "Starting test implementation."
+      - at: 2024-12-24T12:10:00Z
+        note: "Created src/server.test.ts and verified tests pass."
+
+  - id: IMP-007
+    title: "Documentation Update"
+    priority: P2
+    status: done
+    effort: S
+    owner: agent
+    deps: [IMP-005]
+    blocked_reason: null
+    acceptance:
+      - "README contains instructions for SSE and Docker setup"
+    updated_at: 2025-12-24
+    log:
+      - at: 2024-12-24T12:15:00Z
+        note: "Updated README.md with Remote Access and Docker sections."

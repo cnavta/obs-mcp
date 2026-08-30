@@ -1,0 +1,12 @@
+id: sprint-12-twql41
+title: Upgrade to TypeScript MCP SDK 2.0
+goal: Analyze MCP SDK 2.0 changes and create Technical Architecture document for
+  upgrading obs-mcp from SDK 1.0 to 2.0
+owner: Architect
+createdAt: 2026-08-30T15:13:57.704Z
+status: complete
+links:
+  branch: feature/sprint-12-twql41-upgrade-to-typescript-mcp-sdk-
+notes: Sprint initialized via MCP start-sprint tool
+completedAt: 2026-08-30T19:12:01.557Z
+completionMode: normal

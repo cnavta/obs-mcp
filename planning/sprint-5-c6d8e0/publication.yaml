@@ -1,0 +1,4 @@
+pr_url: null
+branch: feature/sprint-5-c6d8e0-deploy-script
+status: failed
+error: "Permission denied (403) when pushing to GitHub. User needs to provide credentials or create PR manually."

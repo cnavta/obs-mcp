@@ -104,14 +104,16 @@ export class OBSWebSocketClient extends EventEmitter {
   private ws: WebSocket | null = null;
   private url: string;
   private password: string | null;
+  private options: { selfSigned?: boolean };
   private connected: boolean = false;
   private identified: boolean = false;
   private pendingRequests: Map<string, { resolve: Function, reject: Function, timeout: NodeJS.Timeout }> = new Map();
 
-  constructor(url: string = 'ws://localhost:4455', password: string | null = null) {
+  constructor(url: string = 'ws://localhost:4455', password: string | null = null, options: { selfSigned?: boolean } = {}) {
     super();
     this.url = url;
     this.password = password;
+    this.options = options;
   }
 
   /**
@@ -125,7 +127,13 @@ export class OBSWebSocketClient extends EventEmitter {
     return new Promise<void>((resolve, reject) => {
       try {
         logger.log(`Attempting to connect to OBS WebSocket at: ${this.url}`);
-        this.ws = new WebSocket(this.url);
+        
+        const wsOptions: any = {};
+        if (this.options.selfSigned) {
+          wsOptions.rejectUnauthorized = false;
+        }
+        
+        this.ws = new WebSocket(this.url, wsOptions);
 
         this.ws.on('open', () => {
           this.connected = true;

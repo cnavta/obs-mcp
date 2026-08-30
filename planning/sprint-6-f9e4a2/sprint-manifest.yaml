@@ -1,0 +1,11 @@
+id: sprint-6-f9e4a2
+title: "Fix Deployment Project Hardcoding"
+goal: "Ensure the deploy script respects PROJECT_ID and GOOGLE_APPLICATION_CREDENTIALS environment variables."
+owner: "Junie"
+createdAt: "2025-12-24T12:25:00Z"
+status: "complete"
+links:
+  branch: "feature/sprint-6-f9e4a2-fix-deploy-project"
+notes: |
+  The current deploy script in package.json defaults to the active gcloud project, which happens to be twitch-452523.
+  We need to make it more flexible.
