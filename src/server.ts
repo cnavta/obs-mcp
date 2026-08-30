@@ -1,41 +1,35 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
+import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
+import { toNodeHandler } from "@modelcontextprotocol/node";
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import { OBSWebSocketClient } from "./client.js";
 import * as tools from "./tools/index.js";
 
-// Create the OBS WebSocket client
+// Create the OBS WebSocket client (singleton - shared across all server instances)
 const obsClient = new OBSWebSocketClient(
   process.env.OBS_WEBSOCKET_URL || "ws://localhost:4455",
   process.env.OBS_WEBSOCKET_PASSWORD || null,
   { selfSigned: process.env.OBS_WEBSOCKET_SELF_SIGNED === "true" }
 );
 
-// Create the MCP server
-export const server = new McpServer({
-  name: "obs-mcp",
-  version: "1.0.0",
-});
-
-// Wrap server.tool to add explicit request logging
-const originalTool = server.tool.bind(server);
-(server as any).tool = (name: string, description: string, schema: any, handler: any) => {
-  return originalTool(name, description, schema, async (args: any, extra: any) => {
-    logger.log(`MCP Tool Request: ${name} with args: ${JSON.stringify(args)}`);
-    try {
-      const result = await handler(args, extra);
-      logger.log(`MCP Tool Response: ${name} success`);
-      return result;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error(`MCP Tool Response: ${name} failed: ${errorMessage}`);
-      throw error;
-    }
+/**
+ * Server factory function - creates a new MCP server instance
+ * Enables per-request server instances for HTTP transport
+ */
+function buildServer(): McpServer {
+  const server = new McpServer({
+    name: "obs-mcp",
+    version: "1.0.1",
   });
-};
+
+  // Register all tools with this server instance
+  // Note: Tool registration is now synchronous in v2
+  tools.initialize(server, obsClient);
+
+  return server;
+}
 
 export let serverConnected = false;
 export let obsConnected = false;
@@ -145,10 +139,6 @@ function startConnectionCheckTimer(): void {
 // Set up server startup logic
 export async function startServer() {
   try {
-    // Initialize all tools with the OBS client
-    await tools.initialize(server, obsClient);
-    logger.log("Initialized MCP tools");
-
     const transportType = process.env.MCP_TRANSPORT || "stdio";
 
     if (transportType === "sse") {
@@ -175,36 +165,23 @@ export async function startServer() {
         next();
       });
 
-      let transport: SSEServerTransport | null = null;
-
-      app.get("/sse", async (req, res) => {
-        logger.log("New SSE connection");
-        transport = new SSEServerTransport("/messages", res);
-        await server.connect(transport);
-
-        res.on('close', () => {
-          logger.log("SSE connection closed");
-          transport = null;
-        });
-      });
-
-      app.post("/messages", async (req, res) => {
-        if (transport) {
-          await transport.handlePostMessage(req, res);
-        } else {
-          res.status(400).send("No active SSE connection");
-        }
-      });
+      // MCP HTTP Handler (v2 - replaces SSE transport)
+      const mcpHandler = createMcpHandler(() => buildServer());
+      const nodeHandler = toNodeHandler(mcpHandler);
+      app.all('/mcp', (req, res) => void nodeHandler(req, res, req.body));
 
       const port = process.env.PORT || 8080;
       app.listen(port, () => {
-        logger.log(`OBS MCP Server running on SSE at http://localhost:${port}`);
+        logger.log(`OBS MCP Server running on HTTP at http://localhost:${port}/mcp`);
+        logger.log("Initialized MCP tools");
       });
     } else {
-      // Connect the MCP server to stdio transport
+      // Stdio transport using v2 pattern
+      const server = buildServer();
       const transport = new StdioServerTransport();
       await server.connect(transport);
       logger.log("OBS MCP Server running on stdio");
+      logger.log("Initialized MCP tools");
     }
 
     serverConnected = true;
